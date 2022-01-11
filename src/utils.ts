@@ -6,7 +6,7 @@ import { Immutables, State } from './interfaces';
 // QuickSwap
 
 // Get the prices of a uniswapv3 pair contract
-export async function getUniswapPrice(cntr: ethers.Contract) {
+export async function getUniswapPrice(cntr: ethers.Contract, token0Decimals: number, token1Decimals: number) {
     // ============ Immutables ============
     const [factory, token0, token1, fee, tickSpacing, maxLiquidityPerTick] = await Promise.all([
         cntr.factory(), cntr.token0(), cntr.token1(), cntr.fee(), cntr.tickSpacing(), cntr.maxLiquidityPerTick()
@@ -28,8 +28,8 @@ export async function getUniswapPrice(cntr: ethers.Contract) {
 
     // ============ Price ============
     const pool = new Pool(
-        new Token(3, immutables.token0, 18),
-        new Token(3, immutables.token1, 18),
+        new Token(3, immutables.token0, token0Decimals),
+        new Token(3, immutables.token1, token1Decimals),
         immutables.fee,
         state.sqrtPriceX96.toString(),
         state.liquidity.toString(),

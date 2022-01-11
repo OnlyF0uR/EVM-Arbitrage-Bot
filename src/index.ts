@@ -18,7 +18,7 @@ const maticMana = {
 };
 
 async function main() {
-    const uniswapPrices = await getUniswapPrice(maticMana.uniswapV3Pool);
+    const uniswapPrices = await getUniswapPrice(maticMana.uniswapV3Pool, 18, 18);
     const quickswapPrices = await getQuickswapPrice(maticMana.quickswapPool);
 
     console.log('---=(UniswapV3)=---')
