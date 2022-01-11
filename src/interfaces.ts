@@ -7,7 +7,7 @@ export interface Immutables {
     fee: number;
     tickSpacing: number;
     maxLiquidityPerTick: BigNumber;
-}
+};
 
 export interface State {
     liquidity: BigNumber;
@@ -18,4 +18,4 @@ export interface State {
     observationCardinalityNext: number;
     feeProtocol: number;
     unlocked: boolean;
-}
+};

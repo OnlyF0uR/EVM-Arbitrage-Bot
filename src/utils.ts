@@ -44,7 +44,7 @@ export async function getUniswapPrice(cntr: ethers.Contract, token0Decimals: num
         token0_1: parseFloat(pool.token0Price.quote(token0Amount).divide(10).toExact()),
         token1_0: parseFloat(pool.token1Price.quote(token1Amount).divide(10).toExact())
     }
-}
+};
 
 // Get the prices of a quickswap pair
 export async function getQuickswapPrice(cntr: ethers.Contract) {
@@ -54,4 +54,4 @@ export async function getQuickswapPrice(cntr: ethers.Contract) {
         token0_1: reserves._reserve1 / reserves._reserve0,
         token1_0: reserves._reserve0 / reserves._reserve1
     }
-}
+};
