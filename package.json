@@ -1,0 +1,19 @@
+{
+  "name": "polygon-dex-prices",
+  "version": "v1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@uniswap/v3-sdk": "^3.8.1",
+    "dotenv": "^11.0.0",
+    "ethers": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.8",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.4"
+  },
+  "scripts": {
+    "dev": "tsc && node dist/index.js"
+  }
+}
