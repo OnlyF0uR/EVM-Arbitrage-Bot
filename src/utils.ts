@@ -3,10 +3,9 @@ import { ethers } from 'ethers';
 import { Pool } from '@uniswap/v3-sdk';
 import { Token, CurrencyAmount } from '@uniswap/sdk-core';
 import { Immutables, State } from './interfaces';
-// QuickSwap
 
 // Get the prices of a uniswapv3 pair contract
-export async function getUniswapPrice(cntr: ethers.Contract, token0Decimals: number, token1Decimals: number) {
+export async function uniswapV3Price(cntr: ethers.Contract, token0Decimals: number, token1Decimals: number, exchangeId: number, poolFee: number) {
     // ============ Immutables ============
     const [factory, token0, token1, fee, tickSpacing, maxLiquidityPerTick] = await Promise.all([
         cntr.factory(), cntr.token0(), cntr.token1(), cntr.fee(), cntr.tickSpacing(), cntr.maxLiquidityPerTick()
@@ -36,22 +35,35 @@ export async function getUniswapPrice(cntr: ethers.Contract, token0Decimals: num
         state.tick
     );
 
-    const token0Amount = CurrencyAmount.fromRawAmount(pool.token0, 10e18);
-    const token1Amount = CurrencyAmount.fromRawAmount(pool.token1, 10e18);
+    const token0Amount = CurrencyAmount.fromRawAmount(pool.token0, 10**token0Decimals);
+    const token1Amount = CurrencyAmount.fromRawAmount(pool.token1, 10**token1Decimals);
 
     // ============ Return ============
     return {
-        token0_1: parseFloat(pool.token0Price.quote(token0Amount).divide(10).toExact()),
-        token1_0: parseFloat(pool.token1Price.quote(token1Amount).divide(10).toExact())
+        token0_1: parseFloat(pool.token0Price.quote(token0Amount).toExact()) * ((100 - (poolFee / 10000)) / 100),
+        token1_0: parseFloat(pool.token1Price.quote(token1Amount).toExact()) * ((100 - (poolFee / 10000)) / 100),
+        index: exchangeId,
+        poolFee: poolFee
     }
 };
 
 // Get the prices of a quickswap pair
-export async function getQuickswapPrice(cntr: ethers.Contract) {
+export async function uniswapV2Price(cntr: ethers.Contract, exchangeId: number, poolFee: number) {
     const reserves = await cntr.functions.getReserves();
 
     return {
-        token0_1: reserves._reserve1 / reserves._reserve0,
-        token1_0: reserves._reserve0 / reserves._reserve1
+        token0_1: reserves._reserve1 / reserves._reserve0 * ((100 - (poolFee / 10000)) / 100),
+        token1_0: reserves._reserve0 / reserves._reserve1 * ((100 - (poolFee / 10000)) / 100),
+        index: exchangeId,
+        poolFee: poolFee
     }
 };
+
+export function indexToDex(index: number) {
+    if (index === 0)
+        return 'UniswapV3';
+    else if (index === 1)
+        return 'Quickswap';
+    else if (index === 2)
+        return 'Firebird';
+}

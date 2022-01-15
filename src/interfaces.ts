@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 
 export interface Immutables {
     factory: string;
@@ -19,3 +19,10 @@ export interface State {
     feeProtocol: number;
     unlocked: boolean;
 };
+
+export interface PriceLookup {
+    token0_1: number,
+    token1_0: number,
+    index: number,
+    poolFee: number
+}
