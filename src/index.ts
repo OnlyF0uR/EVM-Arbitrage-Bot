@@ -195,4 +195,4 @@ async function main() {
 }
 
 main();
-setInterval(main, 1000 * 60 * 3);
+setInterval(main, 1000 * parseInt(process.env.REQUEST_INTERVAL as string));
