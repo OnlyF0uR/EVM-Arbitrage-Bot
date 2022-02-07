@@ -75,7 +75,6 @@ async function main() {
                     token: '0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4',
                     fee: data.sell.fee,
                 },
-                receiver: signer.address
             }, ethers.utils.parseUnits('5000'), { gasLimit: 1000000 }).catch(console.error)
         }
     }
@@ -99,7 +98,6 @@ async function main() {
                     token: '0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4',
                     fee: data.sell.fee
                 },
-                receiver: signer.address
             }, ethers.utils.parseUnits('1'), { gasLimit: 1000000 }).catch(console.error)
         }
     }
@@ -123,7 +121,6 @@ async function main() {
                     token: '0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b',
                     fee: data.sell.fee
                 },
-                receiver: signer.address
             }, ethers.utils.parseUnits('1000'), { gasLimit: 1000000 }).catch(console.error)
         }
     }
@@ -156,7 +153,6 @@ async function main() {
                     token: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
                     fee: data.sell.fee
                 },
-                receiver: signer.address
             }, ethers.utils.parseUnits('25000', 6), { gasLimit: 1000000 }).catch(console.error)
         }
     }
@@ -190,7 +186,6 @@ async function main() {
                     token: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
                     fee: data.sell.fee
                 },
-                receiver: signer.address
             }, ethers.utils.parseUnits('2', 8), { gasLimit: 1000000 }).catch(console.error)
         }
     }
