@@ -35,7 +35,10 @@ const analyze = async (buyAmount: number, priceList: PriceLookup[]) => {
     const xTokenAmount = yTokenAmount * sellAt.token1_0;
     console.log('Amount of xToken |', xTokenAmount);
 
-    const endAmount = xTokenAmount - (buyAmount * 1.0009);
+    let endAmount = xTokenAmount - (buyAmount * 1.0009);
+    if (parseFloat(process.env.PADDING as string) > 0) {
+        endAmount *= parseFloat(process.env.PADDING as string);
+    }
     console.log('Result (Base + Premium) - Amount |', endAmount);
 
     if (endAmount <= 0) {
