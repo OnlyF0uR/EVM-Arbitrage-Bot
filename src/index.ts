@@ -72,7 +72,7 @@ async function main() {
 
     // ============ wMATIC/MANA ============
     {
-        console.log('\nwMATIC/MANA');
+        console.log('wMATIC/MANA');
         const dat: any = await runMath(5000, [
             // https://info.uniswap.org/#/polygon/pools/0x56845fd95C766eCB0ab450fE2D105a19440a6E35
             await uniswapV3Price(poolContract('0x56845fd95C766eCB0ab450fE2D105a19440a6E35', IUniswapV3PoolABI), 18, 18, 3000),
@@ -89,7 +89,7 @@ async function main() {
     
     // ============ wETH/MANA ============
     {
-        console.log('\nwETH/MANA');
+        console.log('wETH/MANA');
         const dat: any = await runMath(0.5, [
             // https://info.uniswap.org/#/polygon/pools/0x28bdd3749bdea624a726ca153de1cb673f459b9d
             await uniswapV3Price(poolContract('0x28bdd3749bdea624a726ca153de1cb673f459b9d', IUniswapV3PoolABI), 18, 18, 3000),
@@ -106,7 +106,7 @@ async function main() {
 
     // ============ wMATIC/AVAX ============
     {
-        console.log('\nwMATIC/AVAX');
+        console.log('wMATIC/AVAX');
         const dat: any = await runMath(800, [
             // https://info.uniswap.org/#/polygon/pools/0xfa3f210cbad19c8b860a256d67a400d616a87c2a
             await uniswapV3Price(poolContract('0xfa3f210cbad19c8b860a256d67a400d616a87c2a', IUniswapV3PoolABI), 18, 18, 3000),
@@ -123,7 +123,7 @@ async function main() {
 
     // ============ USDC/wETH ============
     {
-        console.log('\nUSDC/wETH');
+        console.log('USDC/wETH');
         // https://info.quickswap.exchange/#/pair/0x853ee4b2a13f8a742d64c8f088be7ba2131f670d
         const quickSwapData = await uniswapV2Price(poolContract('0x853ee4b2a13f8a742d64c8f088be7ba2131f670d', IUniswapV2PairABI), 3000);
         quickSwapData.token0_1 /= 10**12;
@@ -150,6 +150,7 @@ async function main() {
 
     // ============ wBTC/wETH ============
     {
+        console.log('wBTC/wETH');
         // https://info.quickswap.exchange/#/pair/0xdc9232e2df177d7a12fdff6ecbab114e2231198d
         const quickSwapData = await uniswapV2Price(poolContract('0xdc9232e2df177d7a12fdff6ecbab114e2231198d', IUniswapV2PairABI), 3000);
         quickSwapData.token0_1 /= 10**10;

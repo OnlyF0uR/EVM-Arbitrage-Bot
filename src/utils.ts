@@ -64,7 +64,6 @@ export async function uniswapV2Price(cntr: ethers.Contract, poolFee: number) {
 
 export async function poolToDex(cntr: ethers.Contract) {
     const factory = await cntr.functions.factory();
-    console.log(factory[0])
 
     switch(factory[0]) {
         case '0x1F98431c8aD98523631AE4a59f267346ea31F984':
