@@ -8,6 +8,7 @@ import { PriceLookup } from './interfaces';
 const provider = new ethers.providers.JsonRpcProvider(process.env.JSON_RPC_PROVIDER as string);
 
 let runCounter = 0;
+let oppCounter = 0;
 const runMath = async (buyAmount: number, priceList: PriceLookup[]) => {
     // Sort the prices
     priceList.sort((a, b) => b.token0_1 - a.token0_1);
@@ -45,8 +46,11 @@ const runMath = async (buyAmount: number, priceList: PriceLookup[]) => {
 
     console.log(`${colours.FgBlue}========================\n${colours.FgGreen}Total: ${netProfit}${colours.Reset}\n`);
 
-    return netProfit < 0 ? null : {
-    // return netProfit > 0 ? null : {
+    // Return null if there is no profit
+    if (netProfit <= 0) return null;
+
+    oppCounter++;
+    return {
         buy: {
             router: await poolToRouter(buyAt.pool),
             tokenIn: "",
@@ -188,8 +192,8 @@ async function main() {
     // https://info.quickswap.exchange/#/pair/0x604229c960e5cacf2aaeac8be68ac07ba9df81c3
 
     // ========================
-    console.log(`(${runCounter}) Finished. Awaiting next call.`);
     runCounter++;
+    console.log(`(${runCounter}/${oppCounter}) Finished. Awaiting next call.`);
 }
 
 main();
