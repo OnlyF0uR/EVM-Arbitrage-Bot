@@ -67,7 +67,7 @@ function poolContract(adr: string, abi: any) {
 }
 
 async function main() {
-    const signer = new ethers.Wallet(process.env.WALLET_PRIVATE_KEY as string, provider);
+    const signer = new ethers.Wallet(process.env.PRIVATE_KEY as string, provider);
     const cntr = new ethers.Contract(process.env.CONTRACT_ADDRESS as string, CntrAbi, signer);
 
     // ============ wMATIC/MANA ============
@@ -173,6 +173,18 @@ async function main() {
             await cntr.functions.execute(dat, ethers.utils.parseUnits('2', 8), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
         }
     }
+
+    // ============ wMATIC/USDC ============
+    // https://info.uniswap.org/#/polygon/pools/0xa374094527e1673a86de625aa59517c5de346d32
+    // https://info.quickswap.exchange/#/pair/0x6e7a5fafcec6bb1e78bae2a1f0b612012bf14827
+
+    // ============ wMATIC/wETH ============
+    // https://info.uniswap.org/#/polygon/pools/0x167384319b41f7094e62f7506409eb38079abff8
+    // https://info.quickswap.exchange/#/pair/0xadbf1854e5883eb8aa7baf50705338739e558e5b
+
+    // ============ wMATIC/USDT ============
+    // https://info.uniswap.org/#/polygon/pools/0x781067ef296e5c4a4203f81c593274824b7c185d
+    // https://info.quickswap.exchange/#/pair/0x604229c960e5cacf2aaeac8be68ac07ba9df81c3
 
     // ========================
     console.log(`(${runCounter}) Finished. Awaiting next call.`);
