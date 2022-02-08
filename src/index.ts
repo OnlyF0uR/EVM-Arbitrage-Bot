@@ -45,8 +45,8 @@ const runMath = async (buyAmount: number, priceList: PriceLookup[]) => {
 
     console.log(`${colours.FgBlue}========================\n${colours.FgGreen}Total: ${netProfit}${colours.Reset}\n`);
 
-    // return netProfit < 0 ? null : {
-    return netProfit > 0 ? null : {
+    return netProfit < 0 ? null : {
+    // return netProfit > 0 ? null : {
         buy: {
             router: await poolToRouter(buyAt.pool),
             tokenIn: "",
