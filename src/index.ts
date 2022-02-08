@@ -1,54 +1,65 @@
 require('dotenv').config()
 
 import { ethers } from 'ethers';
-import { abi as IUniswapV3PoolABI } from '@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json';
-import { uniswapV3Price, uniswapV2Price, indexToDex } from './utils';
+import { uniswapV3Price, uniswapV2Price, poolToDex, poolToRouter, colours, IUniswapV3PoolABI, IUniswapV2PairABI, CntrAbi } from './utils';
 import { PriceLookup } from './interfaces';
 
 // ============ Provider ============
-const provider = new ethers.providers.JsonRpcProvider(
-    // 'http://localhost:8545'
-    `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
-);
-
-const IUniswapV2PairABI = [{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Burn","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1","type":"uint256"}],"name":"Mint","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"sender","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount0In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1In","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount0Out","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount1Out","type":"uint256"},{"indexed":true,"internalType":"address","name":"to","type":"address"}],"name":"Swap","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint112","name":"reserve0","type":"uint112"},{"indexed":false,"internalType":"uint112","name":"reserve1","type":"uint112"}],"name":"Sync","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"constant":true,"inputs":[],"name":"DOMAIN_SEPARATOR","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"MINIMUM_LIQUIDITY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"PERMIT_TYPEHASH","outputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"},{"internalType":"address","name":"","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"burn","outputs":[{"internalType":"uint256","name":"amount0","type":"uint256"},{"internalType":"uint256","name":"amount1","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"factory","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getReserves","outputs":[{"internalType":"uint112","name":"_reserve0","type":"uint112"},{"internalType":"uint112","name":"_reserve1","type":"uint112"},{"internalType":"uint32","name":"_blockTimestampLast","type":"uint32"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"_token0","type":"address"},{"internalType":"address","name":"_token1","type":"address"}],"name":"initialize","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"kLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"mint","outputs":[{"internalType":"uint256","name":"liquidity","type":"uint256"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"nonces","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"uint8","name":"v","type":"uint8"},{"internalType":"bytes32","name":"r","type":"bytes32"},{"internalType":"bytes32","name":"s","type":"bytes32"}],"name":"permit","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price0CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"price1CumulativeLast","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"}],"name":"skim","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"uint256","name":"amount0Out","type":"uint256"},{"internalType":"uint256","name":"amount1Out","type":"uint256"},{"internalType":"address","name":"to","type":"address"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"swap","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"sync","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"token0","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"token1","outputs":[{"internalType":"address","name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"}];
-const cntrAbi = [{"inputs":[{"internalType":"address","name":"_flashAddrProvider","type":"address"},{"internalType":"address","name":"_uniswapV3Router","type":"address"},{"internalType":"address","name":"_quickswapRouter","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"ADDRESSES_PROVIDER","outputs":[{"internalType":"contract ILendingPoolAddressesProvider","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LENDING_POOL","outputs":[{"internalType":"contract ILendingPool","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"components":[{"components":[{"internalType":"uint8","name":"index","type":"uint8"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint24","name":"fee","type":"uint24"}],"internalType":"struct Arbitrage.SwapData","name":"buy","type":"tuple"},{"components":[{"internalType":"uint8","name":"index","type":"uint8"},{"internalType":"address","name":"token","type":"address"},{"internalType":"uint24","name":"fee","type":"uint24"}],"internalType":"struct Arbitrage.SwapData","name":"sell","type":"tuple"}],"internalType":"struct Arbitrage.FlashData","name":"_data","type":"tuple"},{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"execute","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address[]","name":"assets","type":"address[]"},{"internalType":"uint256[]","name":"amounts","type":"uint256[]"},{"internalType":"uint256[]","name":"premiums","type":"uint256[]"},{"internalType":"address","name":"initiator","type":"address"},{"internalType":"bytes","name":"params","type":"bytes"}],"name":"executeOperation","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"quickswapRouter","outputs":[{"internalType":"contract IUniswapV2Router02","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"uniswapV3Router","outputs":[{"internalType":"contract ISwapRouter","name":"","type":"address"}],"stateMutability":"view","type":"function"}];
+const provider = new ethers.providers.JsonRpcProvider(process.env.JSON_RPC_PROVIDER as string);
 
 let runCounter = 0;
-const analyze = async (buyAmount: number, priceList: PriceLookup[]) => {
+const runMath = async (buyAmount: number, priceList: PriceLookup[]) => {
+    // Sort the prices
     priceList.sort((a, b) => b.token0_1 - a.token0_1);
 
     const tmpList = [];
-    for (const [key, value] of Object.entries(priceList)) {
-        tmpList.push({ Exchange: indexToDex(value.index), "In / Out": value.token0_1, "Out / In": value.token1_0, "PoolFee (%)": value.poolFee / 10000 })
+    for (const [_, value] of Object.entries(priceList)) {
+        tmpList.push({ Exchange: await poolToDex(value.pool), "In / Out": value.token0_1, "Out / In": value.token1_0, "PoolFee (%)": value.poolFee / 10000 })
     }
     console.table(tmpList);
 
+    // Identify where to buy and sell
     const buyAt = priceList[0];
     const sellAt = priceList[priceList.length - 1];
 
-    console.log('Amount of xToken |', buyAmount);
+    // ========================
+    // xToken = TokenIn for BUY
+    // yToken = TokenOut for BUY
+    // ========================
+    console.log(`${colours.FgBlue}============ Swaps ============`);
+    console.log(`${colours.FgCyan}First Swap:\n - xToken: ${buyAmount} = yToken: ${buyAmount * buyAt.token0_1}`);
+    console.log(`${colours.FgCyan}Second Swap:\n - yToken: ${buyAmount * buyAt.token0_1} = xToken: ${buyAmount * buyAt.token0_1 * sellAt.token1_0}`);
 
-    const yTokenAmount = buyAmount * buyAt.token0_1;
-    console.log('Amount of yToken |', yTokenAmount);
-
-    const xTokenAmount = yTokenAmount * sellAt.token1_0;
-    console.log('Amount of xToken |', xTokenAmount);
-
-    let endAmount = xTokenAmount - (buyAmount * 1.0009);
+    console.log(`${colours.FgBlue}============ Profit ============`);
+    var netProfit = buyAmount - (buyAmount * buyAt.token0_1 * sellAt.token1_0);
+    
+    // Flashloan premium
+    netProfit -= buyAmount * 0.009;
+    console.log(`${colours.FgRed}After: FL Premium: ${netProfit}`);
+    
+    // Padding
     if (parseFloat(process.env.PADDING as string) > 0) {
-        endAmount *= parseFloat(process.env.PADDING as string);
-    }
-    console.log('Result (Base + Premium) - Amount |', endAmount);
-
-    if (endAmount <= 0) {
-        return null;
+        netProfit -= netProfit * parseFloat(process.env.PADDING as string);
+        console.log(`After: Padding: ${netProfit}`);
     }
 
-    console.log(`Buy at: ${indexToDex(buyAt.index)}`);
-    console.log(`Sell at: ${indexToDex(sellAt.index)}`);
+    console.log(`${colours.FgBlue}========================\n${colours.FgGreen}Total: ${netProfit}${colours.Reset}\n`);
 
-    return { buy: { index: buyAt.index, fee: buyAt.poolFee }, sell: { index: sellAt.index, fee: sellAt.poolFee } };
+    // return netProfit < 0 ? null : {
+    return netProfit > 0 ? null : {
+        buy: {
+            router: await poolToRouter(buyAt.pool),
+            tokenIn: "",
+            poolFee: buyAt.poolFee,
+            isV3: buyAt.isV3,
+        },
+        sell: {
+            router: await poolToRouter(sellAt.pool),
+            tokenIn: "",
+            poolFee: sellAt.poolFee,
+            isV3: sellAt.isV3,
+        }
+    }
 }
 
 function poolContract(adr: string, abi: any) {
@@ -57,142 +68,113 @@ function poolContract(adr: string, abi: any) {
 
 async function main() {
     const signer = new ethers.Wallet(process.env.WALLET_PRIVATE_KEY as string, provider);
-    const cntr = new ethers.Contract(process.env.CONTRACT_ADDRESS as string, cntrAbi, signer);
+    const cntr = new ethers.Contract(process.env.CONTRACT_ADDRESS as string, CntrAbi, signer);
 
     // ============ wMATIC/MANA ============
     {
         console.log('\nwMATIC/MANA');
-        const data = await analyze(5000, [
-            await uniswapV3Price(poolContract('0x56845fd95c766ecb0ab450fe2d105a19440a6e35', IUniswapV3PoolABI), 18, 18, 0, 3000),
-            await uniswapV2Price(poolContract('0x6b0ce31ead9b14c2281d80a5dde903ab0855313a', IUniswapV2PairABI), 1, 3000)
+        const dat: any = await runMath(5000, [
+            // https://info.uniswap.org/#/polygon/pools/0x56845fd95C766eCB0ab450fE2D105a19440a6E35
+            await uniswapV3Price(poolContract('0x56845fd95C766eCB0ab450fE2D105a19440a6E35', IUniswapV3PoolABI), 18, 18, 3000),
+            // https://info.quickswap.exchange/#/pair/0x6b0Ce31eAD9b14c2281D80A5DDE903AB0855313A
+            await uniswapV2Price(poolContract('0x6b0Ce31eAD9b14c2281D80A5DDE903AB0855313A', IUniswapV2PairABI), 3000)
         ]);
-        if (data != null) {
-            cntr.functions.execute({
-                buy: {
-                    index: data.buy.index,
-                    token: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                    fee: data.buy.fee
-                },
-                sell: {
-                    index: data.sell.index,
-                    token: '0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4',
-                    fee: data.sell.fee,
-                },
-            }, ethers.utils.parseUnits('5000'), { gasLimit: process.env.GAS_LIMIT }).catch(console.error)
+        if (dat != null) {
+            dat.buy["tokenIn"] = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270';
+            dat.sell["tokenIn"] = '0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4';
+
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('5000', 18), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
         }
     }
-
+    
     // ============ wETH/MANA ============
     {
         console.log('\nwETH/MANA');
-        const data = await analyze(1, [
-            await uniswapV3Price(poolContract('0x28bdd3749bdea624a726ca153de1cb673f459b9d', IUniswapV3PoolABI), 18, 18, 0, 3000),
-            await uniswapV2Price(poolContract('0x814b6c10bf752bbbea7bd68e5e65dc28b4f45982', IUniswapV2PairABI), 1, 3000)
+        const dat: any = await runMath(0.5, [
+            // https://info.uniswap.org/#/polygon/pools/0x28bdd3749bdea624a726ca153de1cb673f459b9d
+            await uniswapV3Price(poolContract('0x28bdd3749bdea624a726ca153de1cb673f459b9d', IUniswapV3PoolABI), 18, 18, 3000),
+            // https://info.quickswap.exchange/#/pair/0x814b6c10bf752bbbea7bd68e5e65dc28b4f45982
+            await uniswapV2Price(poolContract('0x814b6c10bf752bbbea7bd68e5e65dc28b4f45982', IUniswapV2PairABI), 3000)
         ]);
-        if (data != null) {
-            cntr.functions.execute({
-                buy: {
-                    index: data.buy.index,
-                    token: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
-                    fee: data.buy.fee
-                },
-                sell: {
-                    index: data.sell.index,
-                    token: '0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4',
-                    fee: data.sell.fee
-                },
-            }, ethers.utils.parseUnits('1'), { gasLimit: process.env.GAS_LIMIT }).catch(console.error)
+        if (dat != null) {
+            dat.buy["tokenIn"] = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619';
+            dat.sell["tokenIn"] = '0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4';
+
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('0.5', 18), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
         }
     }
 
     // ============ wMATIC/AVAX ============
     {
         console.log('\nwMATIC/AVAX');
-        const data = await analyze(1000, [
-            await uniswapV3Price(poolContract('0xfa3f210cbad19c8b860a256d67a400d616a87c2a', IUniswapV3PoolABI), 18, 18, 0, 3000),
-            await uniswapV2Price(poolContract('0xeb477ae74774b697b5d515ef8ca09e24fee413b5', IUniswapV2PairABI), 1, 3000)
+        const dat: any = await runMath(800, [
+            // https://info.uniswap.org/#/polygon/pools/0xfa3f210cbad19c8b860a256d67a400d616a87c2a
+            await uniswapV3Price(poolContract('0xfa3f210cbad19c8b860a256d67a400d616a87c2a', IUniswapV3PoolABI), 18, 18, 3000),
+            // https://info.quickswap.exchange/#/pair/0xeb477ae74774b697b5d515ef8ca09e24fee413b5
+            await uniswapV2Price(poolContract('0xeb477ae74774b697b5d515ef8ca09e24fee413b5', IUniswapV2PairABI), 3000)
         ]);
-        if (data != null) {
-            cntr.functions.execute({
-                buy: {
-                    index: data.buy.index,
-                    token: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-                    fee: data.buy.fee
-                },
-                sell: {
-                    index: data.sell.index,
-                    token: '0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b',
-                    fee: data.sell.fee
-                },
-            }, ethers.utils.parseUnits('1000'), { gasLimit: process.env.GAS_LIMIT }).catch(console.error)
+        if (dat != null) {
+            dat.buy["tokenIn"] = '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270';
+            dat.sell["tokenIn"] = '0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b';
+
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('800', 18), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
         }
     }
 
     // ============ USDC/wETH ============
     {
         console.log('\nUSDC/wETH');
-        const quickSwapData = await uniswapV2Price(poolContract('0x853ee4b2a13f8a742d64c8f088be7ba2131f670d', IUniswapV2PairABI), 1, 3000);
+        // https://info.quickswap.exchange/#/pair/0x853ee4b2a13f8a742d64c8f088be7ba2131f670d
+        const quickSwapData = await uniswapV2Price(poolContract('0x853ee4b2a13f8a742d64c8f088be7ba2131f670d', IUniswapV2PairABI), 3000);
         quickSwapData.token0_1 /= 10**12;
         quickSwapData.token1_0 *= 10**12;
 
-        const firebirdData = await uniswapV2Price(poolContract('0x853ee4b2a13f8a742d64c8f088be7ba2131f670d', IUniswapV2PairABI), 2, 3000);
+        // ?
+        const firebirdData = await uniswapV2Price(poolContract('0x853ee4b2a13f8a742d64c8f088be7ba2131f670d', IUniswapV2PairABI), 3000);
         firebirdData.token0_1 /= 10**12;
         firebirdData.token1_0 *= 10**12;
 
-        const data = await analyze(25000, [
-            await uniswapV3Price(poolContract('0x45dda9cb7c25131df268515131f647d726f50608', IUniswapV3PoolABI), 6, 18, 0, 500),
+        const dat: any = await runMath(25000, [
+            // https://info.uniswap.org/#/polygon/pools/0x45dda9cb7c25131df268515131f647d726f50608
+            await uniswapV3Price(poolContract('0x45dda9cb7c25131df268515131f647d726f50608', IUniswapV3PoolABI), 6, 18, 500),
             quickSwapData,
             firebirdData
         ]);
-        if (data != null) {
-            cntr.functions.execute({
-                buy: {
-                    index: data.buy.index,
-                    token: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
-                    fee: data.buy.fee
-                },
-                sell: {
-                    index: data.sell.index,
-                    token: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
-                    fee: data.sell.fee
-                },
-            }, ethers.utils.parseUnits('25000', 6), { gasLimit: process.env.GAS_LIMIT }).catch(console.error)
+        if (dat != null) {
+            dat.buy["tokenIn"] = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174';
+            dat.sell["tokenIn"] = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619';
+
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('25000', 6), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
         }
     }
 
     // ============ wBTC/wETH ============
     {
-        console.log('\nwBTC/wETH'); 
-
-        const quickSwapData = await uniswapV2Price(poolContract('0xdc9232e2df177d7a12fdff6ecbab114e2231198d', IUniswapV2PairABI), 1, 3000);
+        // https://info.quickswap.exchange/#/pair/0xdc9232e2df177d7a12fdff6ecbab114e2231198d
+        const quickSwapData = await uniswapV2Price(poolContract('0xdc9232e2df177d7a12fdff6ecbab114e2231198d', IUniswapV2PairABI), 3000);
         quickSwapData.token0_1 /= 10**10;
         quickSwapData.token1_0 *= 10**10;
 
-        const firebirdData = await uniswapV2Price(poolContract('0x10f525cfbce668815da5142460af0fcfb5163c81', IUniswapV2PairABI), 2, 3000);
+        // ?
+        const firebirdData = await uniswapV2Price(poolContract('0x10f525cfbce668815da5142460af0fcfb5163c81', IUniswapV2PairABI), 3000);
         firebirdData.token0_1 /= 10**10;
         firebirdData.token1_0 *= 10**10;
 
-        const data = await analyze(2, [
-            await uniswapV3Price(poolContract('0x50eaedb835021e4a108b7290636d62e9765cc6d7', IUniswapV3PoolABI), 8, 18, 0, 500),
+        const dat: any = await runMath(2, [
+            // https://info.uniswap.org/#/polygon/pools/0x50eaedb835021e4a108b7290636d62e9765cc6d7
+            await uniswapV3Price(poolContract('0x50eaedb835021e4a108b7290636d62e9765cc6d7', IUniswapV3PoolABI), 8, 18, 500),
             quickSwapData,
             firebirdData
         ]);
-        if (data != null) {
-            cntr.functions.execute({
-                buy: {
-                    index: data.buy.index,
-                    token: '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6',
-                    fee: data.buy.fee
-                },
-                sell: {
-                    index: data.sell.index,
-                    token: '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619',
-                    fee: data.sell.fee
-                },
-            }, ethers.utils.parseUnits('2', 8), { gasLimit: process.env.GAS_LIMIT }).catch(console.error)
+        if (dat != null) {
+            dat.buy["tokenIn"] = '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6';
+            dat.sell["tokenIn"] = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619';
+
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('2', 8), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
         }
     }
 
+    // ========================
     console.log(`(${runCounter}) Finished. Awaiting next call.`);
     runCounter++;
 }

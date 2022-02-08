@@ -21,8 +21,9 @@ export interface State {
 };
 
 export interface PriceLookup {
-    token0_1: number,
-    token1_0: number,
-    index: number,
-    poolFee: number
+    isV3: boolean;
+    pool: Contract;
+    token0_1: number;
+    token1_0: number;
+    poolFee: number;
 }
