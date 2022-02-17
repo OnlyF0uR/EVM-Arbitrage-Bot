@@ -35,7 +35,7 @@ const runMath = async (buyAmount: number, priceList: PriceLookup[]) => {
     var netProfit = buyAmount - (buyAmount * buyAt.token0_1 * sellAt.token1_0);
     
     // Flashloan premium
-    netProfit -= buyAmount * 0.009;
+    netProfit -= buyAmount * 0.0009;
     console.log(`${colours.FgRed}After: FL Premium: ${netProfit}`);
     
     // Padding
