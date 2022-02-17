@@ -70,6 +70,12 @@ function poolContract(adr: string, abi: any) {
     return new ethers.Contract(adr, abi, provider)
 }
 
+let nonceOffset = 0;
+async function getNonce(adr: string) {
+    let baseNonce = await provider.getTransactionCount(adr);
+    return baseNonce + (nonceOffset++);
+}
+
 async function main() {
     const signer = new ethers.Wallet(process.env.PRIVATE_KEY as string, provider);
     const cntr = new ethers.Contract(process.env.CONTRACT_ADDRESS as string, CntrAbi, signer);
@@ -87,7 +93,10 @@ async function main() {
             dat.buy["tokenIn"] = '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270';
             dat.sell["tokenIn"] = '0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4';
 
-            await cntr.functions.execute(dat, ethers.utils.parseUnits('5000', 18), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
+            let baseNonce = provider.getTransactionCount(signer.address);
+            let nonceOffset = 0;
+
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('5000', 18), { gasLimit: process.env.GAS_LIMIT, nonce: await getNonce(signer.address) }).catch(console.error);
         }
     }
     
@@ -104,7 +113,7 @@ async function main() {
             dat.buy["tokenIn"] = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619';
             dat.sell["tokenIn"] = '0xa1c57f48f0deb89f569dfbe6e2b7f46d33606fd4';
 
-            await cntr.functions.execute(dat, ethers.utils.parseUnits('0.5', 18), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('0.5', 18), { gasLimit: process.env.GAS_LIMIT, nonce: await getNonce(signer.address) }).catch(console.error);
         }
     }
 
@@ -121,7 +130,7 @@ async function main() {
             dat.buy["tokenIn"] = '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270';
             dat.sell["tokenIn"] = '0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b';
 
-            await cntr.functions.execute(dat, ethers.utils.parseUnits('800', 18), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('800', 18), { gasLimit: process.env.GAS_LIMIT, nonce: await getNonce(signer.address) }).catch(console.error);
         }
     }
 
@@ -148,7 +157,7 @@ async function main() {
             dat.buy["tokenIn"] = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174';
             dat.sell["tokenIn"] = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619';
 
-            await cntr.functions.execute(dat, ethers.utils.parseUnits('25000', 6), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('25000', 6), { gasLimit: process.env.GAS_LIMIT, nonce: await getNonce(signer.address) }).catch(console.error);
         }
     }
 
@@ -175,7 +184,7 @@ async function main() {
             dat.buy["tokenIn"] = '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6';
             dat.sell["tokenIn"] = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619';
 
-            await cntr.functions.execute(dat, ethers.utils.parseUnits('2', 8), { gasLimit: process.env.GAS_LIMIT }).catch(console.error);
+            await cntr.functions.execute(dat, ethers.utils.parseUnits('2', 8), { gasLimit: process.env.GAS_LIMIT, nonce: await getNonce(signer.address) }).catch(console.error);
         }
     }
 
