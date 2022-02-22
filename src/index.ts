@@ -32,7 +32,7 @@ const runMath = async (buyAmount: number, priceList: PriceLookup[]) => {
     console.log(`${colours.FgCyan}Second Swap:\n - yToken: ${buyAmount * buyAt.token0_1} = xToken: ${buyAmount * buyAt.token0_1 * sellAt.token1_0}`);
 
     console.log(`${colours.FgBlue}============ Profit ============`);
-    var netProfit = buyAmount - (buyAmount * buyAt.token0_1 * sellAt.token1_0);
+    var netProfit = (buyAmount * buyAt.token0_1 * sellAt.token1_0) - buyAmount;
 
     console.log(`${colours.FgRed}After Swaps: ${netProfit}`);
     
