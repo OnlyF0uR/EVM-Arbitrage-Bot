@@ -1,7 +1,27 @@
 # EVM-Arbitrage-Bot
 
-### RE2
-The Arbitrage bot is currently being reworked significantly, the prototype is very promising. Join our [Discord](https://discord.gg/3SYg3M5) if you're interested.
+Extensive and fine-tuned arbitrage bot for spotting arbitrage oppertunities on the following blockchains:
 
-### Donations
-Monero (XMR): 45f9A545w7TEXZLppX6bdQj8JSfG3RqBefMgfdisRaqKDiZMdbYtJHb7EzZibXPjc8W7yVJRoHWDmi69D7pHiB9iLDioVLd
+- Ethereum
+- Optimism
+- Arbitrum One
+- Polygon
+- Binance Smart Chain (bsc)
+- Celo
+- Avalanche
+- Base
+- Fantom
+- Harmony ONE
+
+As well as the following decentralised exchanges right out of the box:
+
+- Uniswap V3
+- Uniswap V2
+- Sushiswap V3
+- Sushiswap V2
+- Quickswap V3
+- Quickswap V2
+- Pancakeswap V3
+- Pancakeswap V2
+
+Keep in mind that this version does not make any trades. The complete, and expanded version is currently used privately. For more information join the [Discord Server](https://discord.gg/VxAGcGqrg5)
