@@ -1,4 +1,5 @@
 # EVM-Arbitrage-Bot
+Requires: [EVM-Arbitrage-Contract](https://github.com/OnlyF0uR/EVM-Arbitrage-Contract)
 
 Extensive and fine-tuned arbitrage bot for spotting arbitrage oppertunities on the following blockchains:
 
